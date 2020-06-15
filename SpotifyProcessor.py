@@ -27,7 +27,7 @@ class SpotifyProcessor:
 				track = item['track']
 				try:
 					self.playlists_table[playlist_name].append(
-						(track['artists'][0]['name'], track['name'])
+						{track['name']: track['artists'][0]['name']}
 					)
 				except:
 					continue
@@ -72,14 +72,16 @@ class SpotifyProcessor:
 
 	def random_song(self):
 		temp_song = random.choice(self.selected_songs)
-		self.current_song = \
-		f'Playing {temp_song[1]} by {temp_song[0]}'
+		for key in temp_song:
+			self.current_song = \
+			f'Playing {key} by {temp_song[key]}'
 		return temp_song
 
 	def song_at_index(self, index):
 		temp_song = self.selected_songs[index]
-		self.current_song = \
-		f'Playing {temp_song[1]} by {temp_song[0]}'
+		for key in temp_song:
+			self.current_song = \
+			f'Playing {key} by {temp_song[key]}'
 		return temp_song
 
 	def currently_playing(self):
