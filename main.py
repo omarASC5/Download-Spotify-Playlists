@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	)
 	spotify_processor.fill_playlists_table()
 	spotify_processor.list_playlists()
-	spotify_processor.select_playlist(1)
+	spotify_processor.select_playlist(7)
 	
 	print(spotify_processor.current_song)
-	spotify_processor.download_playlist(Music(), random_mode = False)
+	spotify_processor.download_playlist(Music(), random_mode = True, video_mode = True)

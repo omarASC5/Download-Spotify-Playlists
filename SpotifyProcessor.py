@@ -85,7 +85,7 @@ class SpotifyProcessor:
 	def currently_playing(self):
 		return self.current_song
 
-	def download_playlist(self, music, random_mode = False):
+	def download_playlist(self, music, random_mode = False, video_mode = False):
 		for index in range(len(self.playlists_table.keys())):
 			if random_mode:
 				self.random_song()
@@ -93,5 +93,6 @@ class SpotifyProcessor:
 				self.song_at_index(index)
 			music.download_song(
 				self.current_song,
-				self.selected_playlist
+				self.selected_playlist,
+				video_mode = video_mode
 			)
