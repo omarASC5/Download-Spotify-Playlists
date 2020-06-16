@@ -7,7 +7,10 @@ class Music:
 		self.ydl_opts = {
 			'quiet': True,
 			'default_search': 'ytsearch',
-			'outtmpl': './songs/%(title)s.%(ext)s'
+			'outtmpl': './songs/%(title)s.%(ext)s',
+			'ignore-errors': True,
+			'no_overwrites': True,
+			'no_warnings': True
     }
 	
 	def download_song(self, url, playlist_name, video_mode = False):
@@ -27,7 +30,6 @@ class Music:
 
 		# Try to download the song from search term / url
 		with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
-			print('Downloading audio now\n')
 			try:
 				ydl.download([url])
 			except:
