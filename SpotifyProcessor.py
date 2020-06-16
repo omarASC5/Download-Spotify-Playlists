@@ -2,6 +2,8 @@ import random
 import spotipy
 import spotipy.oauth2 as oauth2
 import Music
+import time
+import concurrent.futures
 class SpotifyProcessor:
 	def __init__(self, spotify_client_id, spotify_client_secret, spotify_username):
 		self.spotify_client_id = spotify_client_id
@@ -96,19 +98,31 @@ class SpotifyProcessor:
 	def currently_playing(self):
 		return self.current_song
 
-	def _download_playlist(self, music, random_mode = False, video_mode = False):
-		for index in range(len(self.playlists_table.keys())):
-			if random_mode:
-				self.random_song()
-			else:
-				self.song_at_index(index)
-			music.download_song(
+	def download_music(self, processing):
+		if processing[2]:
+			self.random_song()
+		else:
+			self.song_at_index(processing[1])
+			music2 = processing[0]
+			music2.download_song(
 				self.current_song,
 				self.selected_playlist,
-				video_mode = video_mode
+				video_mode = processing[3]
 			)
 
+	# 2 Pac No Threading Download Time: 150 seconds
+	# 2 Pac WITH Threading Download Time: 71.4 seconds -> Double Performance
+	def _download_playlist(self, music, random_mode = False, video_mode = False):
+		to_process = [[music, index, random_mode, video_mode] for index in range(len(self.selected_songs))]
+
+		with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+			executor.map(self.download_music, to_process)
+
 	def download_playlist(self, index, music, random_mode = False, video_mode = False):
+		print('test', random_mode, video_mode)
 		self.fill_playlists_table()
 		self.select_playlist(index)
+		start = time.perf_counter()
 		self._download_playlist(music, random_mode, video_mode)
+		finish = time.perf_counter()
+		print(f'Finished in {finish - start} seconds')
