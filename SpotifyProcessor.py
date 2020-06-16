@@ -103,19 +103,18 @@ class SpotifyProcessor:
 			self.random_song()
 		else:
 			self.song_at_index(processing[1])
-			music2 = processing[0]
-			music2.download_song(
-				self.current_song,
-				self.selected_playlist,
-				video_mode = processing[3]
-			)
+		music2 = processing[0]
+		music2.download_song(
+			self.current_song,
+			self.selected_playlist,
+			video_mode = processing[3]
+		)
 
 	# 2 Pac No Threading Download Time: 150 seconds
 	# 2 Pac WITH Threading Download Time: 71.4 seconds -> Double Performance
 	def _download_playlist(self, music, random_mode = False, video_mode = False):
 		to_process = [[music, index, random_mode, video_mode] for index in range(len(self.selected_songs))]
-
-		with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+		with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
 			executor.map(self.download_music, to_process)
 
 	def download_playlist(self, index, music, random_mode = False, video_mode = False):

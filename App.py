@@ -17,6 +17,9 @@ class App:
 
 			username_button = Button(self.app, text="Submit", command = lambda: self.second_window(username_entry.get()))
 			username_button.pack()
+
+			warning_message = Label(self.app, text='NOTE: Spotify playlists MUST be made public', font=('bold', 16), pady=15)
+			warning_message.pack()
 			self.app.mainloop()
 
 	def quit(self):
@@ -70,7 +73,6 @@ to download:""",
 			variable=v,
 			value=val).pack(anchor=W)
 
-		# spotify_processor.fill_playlists_table()
 		playlist_button = Button(self.app, text="Submit Playlist",command=lambda:
 			spotify_processor.download_playlist(
 				v.get() + 1, Music(), random_mode = bool(CheckVar1.get()), video_mode = bool(CheckVar2.get())

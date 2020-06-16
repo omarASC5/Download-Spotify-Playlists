@@ -21,4 +21,7 @@ class Music:
 
 		with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
 			print('Downloading audio now\n')
-			ydl.download([url])
+			try:
+				ydl.download([url])
+			except:
+				pass
