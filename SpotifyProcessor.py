@@ -1,13 +1,14 @@
 import random
 import spotipy
 import spotipy.oauth2 as oauth2
-
+import Music
 class SpotifyProcessor:
 	def __init__(self, spotify_client_id, spotify_client_secret, spotify_username):
 		self.spotify_client_id = spotify_client_id
 		self.spotify_client_secret = spotify_client_secret
 		self.spotify_username = spotify_username
 		self.playlists_table = {}
+		self.playlists_names = []
 		self.selected_playlist_index = 1
 		self.selected_playlist = ''
 		self.selected_songs = []
@@ -27,7 +28,7 @@ class SpotifyProcessor:
 				track = item['track']
 				try:
 					self.playlists_table[playlist_name].append(
-						{track['name']: track['artists'][0]['name']}
+						(track['artists'][0]['name'], track['name'])
 					)
 				except:
 					continue
@@ -38,6 +39,7 @@ class SpotifyProcessor:
 		else:
 			for playlist in self.playlists['items']:
 				self.playlists_table[playlist['name']] = []
+				self.playlists_names.append(playlist['name'])
 				results = self.spotify.playlist(
 					playlist['id'],
 					fields = 'tracks,next'
@@ -47,7 +49,16 @@ class SpotifyProcessor:
 
 				while tracks['next']:
 					tracks = self.spotify.next(tracks)
+					self.playlists_names.append(playlist['name'])
 					self.show_tracks(tracks, playlist['name'])
+
+	def fill_playlists_names(self):
+		if not self.token:
+			print("Can't get token for", self.spotify_username)
+		else:
+			for playlist in self.playlists['items']:
+				self.playlists_names.append(playlist['name'])
+
 
 	def list_playlists(self):
 		index = 1
@@ -72,22 +83,20 @@ class SpotifyProcessor:
 
 	def random_song(self):
 		temp_song = random.choice(self.selected_songs)
-		for key in temp_song:
-			self.current_song = \
-			f'Playing {key} by {temp_song[key]}'
+		self.current_song = \
+		f'Playing {temp_song[1]} by {temp_song[0]}'
 		return temp_song
 
 	def song_at_index(self, index):
 		temp_song = self.selected_songs[index]
-		for key in temp_song:
-			self.current_song = \
-			f'Playing {key} by {temp_song[key]}'
+		self.current_song = \
+		f'Playing {temp_song[1]} by {temp_song[0]}'
 		return temp_song
 
 	def currently_playing(self):
 		return self.current_song
 
-	def download_playlist(self, music, random_mode = False, video_mode = False):
+	def _download_playlist(self, music, random_mode = False, video_mode = False):
 		for index in range(len(self.playlists_table.keys())):
 			if random_mode:
 				self.random_song()
@@ -98,3 +107,8 @@ class SpotifyProcessor:
 				self.selected_playlist,
 				video_mode = video_mode
 			)
+
+	def download_playlist(self, index, music, random_mode = False, video_mode = False):
+		self.fill_playlists_table()
+		self.select_playlist(index)
+		self._download_playlist(music, random_mode, video_mode)
