@@ -12,6 +12,7 @@ class App:
 			self.app = Tk()
 			self.app.title('Download Spotify Playlists')
 			self.app.geometry('')
+			# self.app.call('encoding', 'system', 'utf-8')
 
 			# Text Box, Label Prompting username & Submit Button
 			username_text = StringVar()
@@ -84,9 +85,10 @@ to download:""",
 
 		# Loop that renders all playlists under the user's account as bullet points
 		v = IntVar()
+		
 		for val, playlists_name in enumerate(playlists_names):
 			Radiobutton(self.app,
-			text=playlists_name,
+			text=playlists_name.encode('ascii', 'ignore'), # ignores unicode characters
 			padx = 20,
 			variable=v,
 			value=val).pack(anchor=W)
